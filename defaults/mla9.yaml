@@ -1,6 +1,6 @@
 filters:
 - type: citeproc
-- ${HOME}/filters/mla9.lua
+- ${HOME}/pandoc-files/filters/mla9.lua
 metadata:
-- csl: ${HOME}/templates/mla9.csl
+- csl: ${HOME}/pandoc-files/templates/mla9.csl
 standalone: false

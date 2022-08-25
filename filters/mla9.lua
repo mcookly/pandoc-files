@@ -60,21 +60,25 @@ function Note(note)
 end
 
 function Block(b)
-    if b.identifier == 'notes' then
-        -- Replacing the Header block with Para block wrapped in a Div allows for custom styling.
-        -- Insert footnotes after referencse in MLA 9 format. (So I suppose they're endnotes now.)
-        local notes = pandoc.Div({ pandoc.Para{ pandoc.Str('Notes') }, table.unpack(footnotes) })
-        notes.attr =  {['custom-style'] = 'Centered Text'}
-        return {insertPageBreak(FORMAT), notes}
-    elseif b.identifier == 'bibliography' then
+    if b.identifier == 'bibliography' then
         -- Replacing the Header block with Para block wrapped in a Div allows for custom styling.
         local bib = pandoc.Div(pandoc.Para{ pandoc.Str('Works Cited') })
         bib.identifier = b.identifier -- Load old attributes from the header
         bib.attributes['custom-style'] = 'Centered Text'
-        return {insertPageBreak(FORMAT), bib}
+
+        -- Insert notes before Works Cited in MLA 9 format.
+        if next(footnotes) then
+          local notes = pandoc.Div({ pandoc.Para{ pandoc.Str('Notes') }, table.unpack(footnotes) })
+          notes.attr =  {['custom-style'] = 'Centered Text'}
+          return {insertPageBreak(FORMAT), notes, insertPageBreak(FORMAT), bib}
+        else
+          return {insertPageBreak(FORMAT), bib}
+        end
+
     elseif b.identifier == 'refs' then
         b.attributes['custom-style'] = 'Bibliography'
         return b
+
     else
         return b
     end
