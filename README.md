@@ -14,8 +14,8 @@ Files for various pandoc outputs.
 ### `.md`  &rarr;  `.docx`
 ```
 pandoc <input>.md \
---defaults $HOME/pandoc-files/defaultsmla9.yaml \
---reference-doc $HOME/pandoc-files/templates mla9.docx \
+--defaults $HOME/pandoc-files/defaults/mla9.yaml \
+--reference-doc $HOME/pandoc-files/templates/mla9.docx \
 -o <output>.docx
 ```
 Note: Change the header of the `mla9.docx` for correct last name if you don't want to make any adjustments post-conversion.
