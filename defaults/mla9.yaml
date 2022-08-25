@@ -1,0 +1,6 @@
+filters:
+- type: citeproc
+- ${HOME}/filters/mla9.lua
+metadata:
+- csl: ${HOME}/templates/mla9.csl
+standalone: false
