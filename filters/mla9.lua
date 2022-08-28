@@ -47,6 +47,28 @@ local function insertPageBreak(format)
       end
 end
 
+-- Insert footnotes
+local function insertEndnotes(content, pos)
+  -- content: MUST be a table
+  -- pos: 'before' --> insert endnotes before content. 'after' --> vice versa.
+  if not next(footnotes) then
+    -- Don't do anything if footnotes are already inserted or don't exist.
+    return content
+  end
+
+  local notes = pandoc.Div({ insertPageBreak(FORMAT), pandoc.Para{ pandoc.Str('Notes') }, table.unpack(footnotes) })
+  notes.attr =  {['custom-style'] = 'Centered Text'}
+  footnotes = {} -- All done!
+
+  if pos:match 'before' then
+    return { notes, table.unpack(content) }
+  elseif pos:match 'after' then
+    return { table.unpack(content), notes }
+  else
+    return content -- Avoid errors and nil issues.
+  end
+end
+
 -- Find all footnotes, add to a table, and replace with a superscripted number.
 function Note(note)
     footnoteNum = footnoteNum + 1 -- This might be a bit of a hack, but it works.
@@ -60,22 +82,16 @@ function Note(note)
 end
 
 function Block(b)
-    if b.identifier == 'bibliography' then
+    if b.identifier == 'bibliography' then -- Header of Works Cited section
         -- Replacing the Header block with Para block wrapped in a Div allows for custom styling.
         local bib = pandoc.Div(pandoc.Para{ pandoc.Str('Works Cited') })
         bib.identifier = b.identifier -- Load old attributes from the header
         bib.attributes['custom-style'] = 'Centered Text'
 
         -- Insert notes before Works Cited in MLA 9 format.
-        if next(footnotes) then
-          local notes = pandoc.Div({ pandoc.Para{ pandoc.Str('Notes') }, table.unpack(footnotes) })
-          notes.attr =  {['custom-style'] = 'Centered Text'}
-          return {insertPageBreak(FORMAT), notes, insertPageBreak(FORMAT), bib}
-        else
-          return {insertPageBreak(FORMAT), bib}
-        end
+        return insertEndnotes({insertPageBreak(FORMAT), bib}, 'before')
 
-    elseif b.identifier == 'refs' then
+    elseif b.identifier == 'refs' then -- Actual references in Works Cited section
         b.attributes['custom-style'] = 'Bibliography'
         return b
 
@@ -103,9 +119,13 @@ function Pandoc(doc)
     end
     table.insert(doc.blocks, 5, title)
 
+    -- Insert footnotes if they're not inserted yet (i.e., no bibliography)
+    doc.blocks = insertEndnotes(doc.blocks, 'after')
+
     -- Strip META info so that DOCX does not insert it
     if FORMAT:match 'docx' then
         stripMeta(doc.meta)
     end
+
     return doc
 end
