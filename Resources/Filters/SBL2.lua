@@ -48,16 +48,19 @@ function Pandoc(p)
 
   blocks:extend(doc.blocks)
 
-  -- This is the best way to a heading with the right style.
-  blocks:insert(#blocks,pandoc.Div(pandoc.Para('Bibliography'),{ ['custom-style'] = 'Bibliography Heading' }))
+  -- For papers with no citations, no bibliography editing is needed.
+  if blocks[#blocks].identifier == 'refs' then
+    -- This is the best way to a heading with the right style.
+    blocks:insert(#blocks,pandoc.Div(pandoc.Para('Bibliography'),{ ['custom-style'] = 'Bibliography Heading' }))
 
-  -- Adjust the style of the bibliography
-  local bib = {}
-  for _, entry in ipairs(blocks[#blocks].content) do
-    entry.attr = { ['custom-style'] = 'Bibliography 1' }
-    bib[#bib+1] = entry
+    -- Adjust the style of the bibliography if it exists.
+    local bib = {}
+    for _, entry in ipairs(blocks[#blocks].content) do
+      entry.attr = { ['custom-style'] = 'Bibliography 1' }
+      bib[#bib+1] = entry
+    end
+    blocks[#blocks].content = bib
   end
-  blocks[#blocks].content = bib
 
   return pandoc.Pandoc(blocks)
 end
