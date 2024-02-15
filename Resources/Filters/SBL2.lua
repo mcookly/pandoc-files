@@ -56,7 +56,7 @@ function Pandoc(p)
     -- Adjust the style of the bibliography if it exists.
     local bib = {}
     for _, entry in ipairs(blocks[#blocks].content) do
-      entry.attr = { ['custom-style'] = 'Bibliography 1' }
+      entry.attr = { ['custom-style'] = 'Bibliography' }
       bib[#bib+1] = entry
     end
     blocks[#blocks].content = bib
