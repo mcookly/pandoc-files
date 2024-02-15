@@ -8,9 +8,11 @@
 echo "Beginning conversion to PDF …"
 echo "============================="
 
-./Scripts/ODT.sh $1 $2 $3
+./Scripts/SBL-odt.sh $1 $2 $3
 
 soffice --convert-to pdf $2.odt
+
+rm $2.odt
 
 echo "============================="
 echo "Finished conversion to PDF …"
