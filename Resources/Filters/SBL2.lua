@@ -13,6 +13,10 @@ function Meta(m)
       meta[k] = pandoc.utils.stringify(m[k])
     end
   end
+
+  m['link-bibliography'] = false
+
+  return m
 end
 
 function Pandoc(p)
