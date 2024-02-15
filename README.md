@@ -29,9 +29,18 @@ All conversions take Markdown as the file format of their input.
 #### Dependencies
 
 - [LibreOffice](https://www.libreoffice.org/)
+- [Microsoft Word](https://www.microsoft.com/en-us/microsoft-365/word)
 - Times New Roman
 
 #### Filetypes
+
+##### DOCX
+
+Note:  Footnote markers are superscripted due to Word's limited formatting capabilities.
+
+```=bash
+./Scripts/SBL-docx.sh <input.md> <output> <bibliography file>
+```
 
 ##### ODT
 
