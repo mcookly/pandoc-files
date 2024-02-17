@@ -68,3 +68,43 @@ function Pandoc(p)
 
   return pandoc.Pandoc(blocks)
 end
+
+-- Microsoft Word styles the footnote reference marker identically in both body 
+-- and footnote areas.  To counter this, I've styled "Footnote Reference" as
+-- `hidden` in the `.docx` template and, below, manually insert the footnote
+-- text and number.  This still leaves one space before the footnote, but I
+--cannot adjust that unfortunately.
+local function modify_note_contents(n, number)
+  n.content[1] = pandoc.Para(
+    pandoc.Inlines({
+      pandoc.Str(string.format('%i.', number)),
+      pandoc.Space(),
+      pandoc.Space(),
+      table.unpack(n.content[1].content)
+    })
+  )
+
+  return n
+end
+
+if FORMAT == "docx" then
+  local note_counter = 0
+
+  function Block(b)
+    local content = {}
+
+    for i = 1, #b.content do
+      if b.content[i].tag == 'Note' then
+        note_counter = note_counter + 1        
+        content[#content+1] = pandoc.Superscript(pandoc.Str(note_counter))
+        content[#content+1] = modify_note_contents(b.content[i], note_counter)
+      else
+        content[#content+1] = b.content[i]
+      end
+    end
+    
+    b.content = content
+
+    return b
+  end
+end
