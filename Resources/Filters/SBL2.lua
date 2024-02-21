@@ -41,7 +41,10 @@ function Pandoc(p)
   ))
 
   blocks:insert(pandoc.Div(
-    pandoc.Para(meta.author),
+    pandoc.Blocks({
+      pandoc.Para(pandoc.Str('By')), 
+      pandoc.Para(meta.author),
+    }),
     { ['custom-style'] = 'Author' }
   ))
 
