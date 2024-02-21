@@ -53,6 +53,31 @@ function Pandoc(p)
     { ['custom-style'] = 'Date' }
   ))
 
+  -- Before adding the document, we need to adjust H6 to be an inline heading.
+  for i = #doc.blocks-1, 1, -1 do
+    if doc.blocks[i].tag == 'Header' and doc.blocks[i].level == 6 then
+      local inline_para = doc.blocks[i].content
+
+      -- Add punctuation
+      inline_para[#inline_para] = pandoc.Str(inline_para[#inline_para].text .. '.')
+
+      -- Format with emphasis per CMOS 17 guidelines.
+      inline_para = { pandoc.Emph(pandoc.Inlines(inline_para)) }
+
+      inline_para[#inline_para+1] = pandoc.Space()
+
+      -- Append paragraph content
+      for j = 1, #doc.blocks[i+1].content do
+        inline_para[#inline_para+1] = doc.blocks[i+1].content[j]
+      end
+
+      doc.blocks[i+1].content = inline_para
+
+      -- Remove H6.
+      doc.blocks:remove(i)
+    end
+  end
+
   blocks:extend(doc.blocks)
 
   -- For papers with no citations, no bibliography editing is needed.
