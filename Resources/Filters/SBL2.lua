@@ -96,3 +96,17 @@ function Pandoc(p)
 
   return pandoc.Pandoc(blocks)
 end
+
+function Inlines(i)
+
+  for j = #i-1, 1, -1 do
+    -- Convert en-dashes to em-dashes per SBL/CMOS 17 style.
+    if i[j].text == '–' and i[j-1].tag == 'Space' and i[j+1].tag == 'Space' then
+      i[j].text = '—' 
+      i:remove(j+1)
+      i:remove(j-1)
+    end
+  end
+
+  return i
+end
