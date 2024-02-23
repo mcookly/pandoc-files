@@ -26,16 +26,29 @@ function Pandoc(p)
     ))
   end
 
-  blocks:insert(pandoc.Div(
-    pandoc.Blocks({
-      pandoc.Para(pandoc.Str('By')), 
-      pandoc.Para(meta.author),
-    }),
-    { ['custom-style'] = 'Author' }
-  ))
+  if p.meta.author then
+    blocks:insert(pandoc.Div(
+      pandoc.Blocks({
+        pandoc.Para(pandoc.Str('By')), 
+        p.meta.author,
+      }),
+      { ['custom-style'] = 'Author' }
+    ))
+  end
+
+  -- There will always be a date.
+  local date
+  if p.meta.date then
+    local year, month, day = pandoc.utils.normalize_date(
+      pandoc.utils.stringify(p.meta.date)
+    ):match([[(%d%d%d%d)%-(%d%d)%-(%d%d)]])
+    date = os.time({ year = year, month = month, day = day })
+  else
+    date = os.time()
+  end
 
   blocks:insert(pandoc.Div(
-    pandoc.Para(meta.date),
+    pandoc.Para(os.date('%B %e, %Y', date)),
     { ['custom-style'] = 'Date' }
   ))
 
