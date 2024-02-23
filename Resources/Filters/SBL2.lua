@@ -57,8 +57,10 @@ function Pandoc(p)
     if doc.blocks[i].tag == 'Header' and doc.blocks[i].level == 6 then
       local inline_para = doc.blocks[i].content
 
-      -- Add punctuation
-      inline_para[#inline_para] = pandoc.Str(inline_para[#inline_para].text .. '.')
+      -- Add punctuation if needed.
+      if not inline_para[#inline_para].text:match([[[%.%:%;%?%!]$]]) then 
+        inline_para[#inline_para] = pandoc.Str(inline_para[#inline_para].text .. '.')
+      end
 
       -- Format with emphasis per CMOS 17 guidelines.
       inline_para = { pandoc.Emph(pandoc.Inlines(inline_para)) }
