@@ -1,44 +1,30 @@
--- Extract the important metadata information
-local meta = {
-  institution = '',
-  title = '',
-  submission = '',
-  author = '',
-  date = '',
-}
-
-function Meta(m)
-  for k, v in pairs(meta) do
-    if m[k] ~= nil then
-      meta[k] = pandoc.utils.stringify(m[k])
-    end
-  end
-
-  m['link-bibliography'] = false
-
-  return m
-end
-
 function Pandoc(p)
   -- Citeproc needs to be run first so it has all the metadata.
+  p.meta['link-bibliography'] = false
   local doc = pandoc.utils.citeproc(p)
 
   local blocks = pandoc.List:new()
 
-  blocks:insert(pandoc.Div(
-    pandoc.Para(meta.institution),
-    { ['custom-style'] = 'Institution' }
-  ))
+  if p.meta.institution then
+    blocks:insert(pandoc.Div(
+      p.meta.institution,
+      { ['custom-style'] = 'Institution' }
+    ))
+  end
 
-  blocks:insert(pandoc.Div(
-    pandoc.Para(meta.title),
-    { ['custom-style'] = 'Title' }
-  ))
+  if p.meta.title then
+    blocks:insert(pandoc.Div(
+      p.meta.title,
+      { ['custom-style'] = 'Title' }
+    ))
+  end
 
-  blocks:insert(pandoc.Div(
-    pandoc.Para(meta.submission),
-    { ['custom-style'] = 'Submission' }
-  ))
+  if p.meta.submission then
+    blocks:insert(pandoc.Div(
+      p.meta.submission,
+      { ['custom-style'] = 'Submission' }
+    ))
+  end
 
   blocks:insert(pandoc.Div(
     pandoc.Blocks({
