@@ -1,3 +1,11 @@
+local function blockify(el)
+  if pandoc.utils.type(el) == 'Inlines' then
+    return pandoc.Para(pandoc.Inlines(el))
+  end
+
+  return el
+end
+
 function Pandoc(p)
   -- Citeproc needs to be run first so it has all the metadata.
   p.meta['link-bibliography'] = false
@@ -7,21 +15,28 @@ function Pandoc(p)
 
   if p.meta.institution then
     blocks:insert(pandoc.Div(
-      p.meta.institution,
+      blockify(p.meta.institution),
       { ['custom-style'] = 'Institution' }
     ))
   end
 
   if p.meta.title then
     blocks:insert(pandoc.Div(
-      p.meta.title,
+      blockify(p.meta.title),
+      { ['custom-style'] = 'Title' }
+    ))
+  end
+
+  if p.meta.subtitle then
+    blocks:insert(pandoc.Div(
+      blockify(p.meta.subtitle),
       { ['custom-style'] = 'Title' }
     ))
   end
 
   if p.meta.submission then
     blocks:insert(pandoc.Div(
-      p.meta.submission,
+      blockify(p.meta.submission),
       { ['custom-style'] = 'Submission' }
     ))
   end
@@ -29,8 +44,8 @@ function Pandoc(p)
   if p.meta.author then
     blocks:insert(pandoc.Div(
       pandoc.Blocks({
-        pandoc.Para(pandoc.Str('By')), 
-        p.meta.author,
+        pandoc.Para(pandoc.Str('By')),
+        blockify(p.meta.author),
       }),
       { ['custom-style'] = 'Author' }
     ))
