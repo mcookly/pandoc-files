@@ -1,0 +1,6 @@
+[language-server.lua-language-server.config.Lua]
+diagnostics = { enable = true, globals = [ "pandoc" ], disable = [ "lowercase-global" ] }
+
+[[language]]
+name = "lua"
+auto-format = true
